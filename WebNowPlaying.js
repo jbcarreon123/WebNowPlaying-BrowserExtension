@@ -579,14 +579,24 @@ oo     .d8P  888       o      888       `88.    .8'   888
 8""88888P'  o888ooooood8     o888o        `YbodP'    o888o
 */
 
+function init() {
+	chrome.storage.sync.get(
+	{
+		"connectionPort": 0
+	}, function(items) {
+		url = 'ws://127.0.0.1:' + items.connectionPort + "/";
+		console.error(url);
+		init2(url);
+	})	
+}
+
 //Max length of time between attempting to reconnect
 //This is in MS so to make it more readable I took one second of time in MS * 60 to make it minutes so the last multiply is the amount of minutes you want
 var MAXTIMEOUT = 1000 * 60 * 1;
 var connectionAttemptCount = 0;
-function init()
+function init2(url)
 {
-	//@TODO allow custom ports
-	var url = "ws://127.0.0.1:8974/";
+	//allow custom ports
 	ws = new WebSocket(url);
 	ws.onopen = function()
 	{

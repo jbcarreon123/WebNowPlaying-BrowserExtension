@@ -1,3 +1,4 @@
+var thisPort = 8974;
 var thisDoGeneric = false;
 var thisUseGenericList = false;
 var thisWhitelistOrBlacklist = 'whitelist';
@@ -10,8 +11,10 @@ function saveOptions()
 	thisUseGenericList = document.getElementById('useGenericList').checked;
 	thisWhitelistOrBlacklist = document.getElementById('listType').value;
 	thisGenericList = document.getElementById('genericList').value.split("\n");
+	thisPort = Number(document.getElementById('Port').value);
 	chrome.storage.sync.set(
 	{
+		"connectionPort": thisPort,
 		"doGeneric": thisDoGeneric,
 		"useGenericList": thisUseGenericList,
 		"whitelistOrBlacklist": thisWhitelistOrBlacklist,
@@ -27,6 +30,7 @@ function restoreOptions()
 	// Use default value color = 'red' and likesColor = true.
 	chrome.storage.sync.get(
 	{
+		"connectionPort": 0,
 		"doGeneric": false,
 		"useGenericList": false,
 		"whitelistOrBlacklist": 'whitelist',
@@ -37,8 +41,9 @@ function restoreOptions()
 		document.getElementById('useGenericList').checked = items.useGenericList;
 		document.getElementById('listType').value = items.whitelistOrBlacklist;
 		document.getElementById('genericList').value = items.genericList.join("\n");
+		document.getElementById('Port').value = items.connectionPort;
 
-
+		thisPort = Number(document.getElementById('Port').value);
 		thisDoGeneric = document.getElementById('generic').checked;
 		thisUseGenericList = document.getElementById('useGenericList').checked;
 		thisWhitelistOrBlacklist = document.getElementById('listType').value;
@@ -52,6 +57,7 @@ function checkSaveOptions()
 	var isChanged = thisDoGeneric != document.getElementById('generic').checked;
 	isChanged = isChanged || thisUseGenericList != document.getElementById('useGenericList').checked;
 	isChanged = isChanged || thisWhitelistOrBlacklist != document.getElementById('listType').value;
+	isChanged = isChanged || thisPort != document.getElementById('Port').value;
 	isChanged = isChanged || thisGenericList.toString() != document.getElementById('genericList').value.split("\n").toString();
 	if (isChanged)
 	{
@@ -63,6 +69,31 @@ document.addEventListener('DOMContentLoaded', restoreOptions);
 window.onbeforeunload = function(e)
 {
 	saveOptions();
+};
+
+window.onload = function(e) {
+	chrome.storage.sync.get(
+		{
+			"connectionPort": 0,
+			"doGeneric": false,
+			"useGenericList": false,
+			"whitelistOrBlacklist": 'whitelist',
+			"genericList": ["streamable.com", "www.adultswim.com"]
+		}, function(items)
+		{
+			document.getElementById('generic').checked = items.doGeneric;
+			document.getElementById('useGenericList').checked = items.useGenericList;
+			document.getElementById('listType').value = items.whitelistOrBlacklist;
+			document.getElementById('genericList').value = items.genericList.join("\n");
+			document.getElementById('Port').value = items.connectionPort;
+	
+			thisPort = Number(document.getElementById('Port').value);
+			thisDoGeneric = document.getElementById('generic').checked;
+			thisUseGenericList = document.getElementById('useGenericList').checked;
+			thisWhitelistOrBlacklist = document.getElementById('listType').value;
+			thisGenericList = document.getElementById('genericList').value.split("\n");
+		}
+	);
 };
 
 //Check if changed before saving so rate limit should not be hit

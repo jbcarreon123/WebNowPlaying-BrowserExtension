@@ -310,6 +310,7 @@ setInterval(function()
 // Use default value color = 'red' and likesColor = true.
 chrome.storage.sync.get(
 {
+	"connectionPort": 0,
 	"doGeneric": false,
 	"useGenericList": false,
 	"whitelistOrBlacklist": 'whitelist',
